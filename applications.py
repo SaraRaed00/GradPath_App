@@ -10,7 +10,7 @@ import pandas as pd
 from database import get_client
 
 
-# ── Constants ──────────────────────────────────────────────────────────────────
+# Constants 
 
 STATUS_OPTIONS = ["Saved", "Applied", "Interview", "Offer", "Rejected"]
 PRIORITY_OPTIONS = ["Low", "Medium", "High"]
@@ -25,7 +25,7 @@ SOURCE_OPTIONS = [
 ]
 
 
-# ── Create ─────────────────────────────────────────────────────────────────────
+# Create 
 
 def create_application(data: dict) -> dict | None:
     """
@@ -46,7 +46,7 @@ def create_application(data: dict) -> dict | None:
         return None
 
 
-# ── Read ───────────────────────────────────────────────────────────────────────
+# Read 
 
 def get_all_applications() -> pd.DataFrame:
     """
@@ -91,7 +91,7 @@ def get_application_by_id(app_id: int) -> dict | None:
         return None
 
 
-# ── Update ─────────────────────────────────────────────────────────────────────
+# Update 
 
 def update_application(app_id: int, data: dict) -> bool:
     """
@@ -115,7 +115,7 @@ def update_application(app_id: int, data: dict) -> bool:
         return False
 
 
-# ── Delete ─────────────────────────────────────────────────────────────────────
+# Delete 
 
 def delete_application(app_id: int) -> bool:
     """
@@ -136,7 +136,7 @@ def delete_application(app_id: int) -> bool:
         return False
 
 
-# ── Search / Filter helpers ────────────────────────────────────────────────────
+# Search / Filter helpers
 
 def filter_applications(
     df: pd.DataFrame,
@@ -188,7 +188,7 @@ def filter_applications(
     return filtered.reset_index(drop=True)
 
 
-# ── Internal helpers ───────────────────────────────────────────────────────────
+#Internal helpers 
 
 def _serialize_dates(data: dict) -> dict:
     """Convert date/datetime objects to ISO format strings for JSON."""

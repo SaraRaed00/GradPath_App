@@ -10,7 +10,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 
 
-# ── Colour palette (consistent across all charts) ─────────────────────────────
 
 COLORS = {
     "Saved": "#94a3b8",
@@ -31,7 +30,7 @@ CHART_THEME = dict(
 )
 
 
-# ── Summary metrics ────────────────────────────────────────────────────────────
+#Summary metrics 
 
 def compute_metrics(df: pd.DataFrame) -> dict:
     """
@@ -115,7 +114,7 @@ def get_upcoming_deadlines(df: pd.DataFrame, days: int = 7) -> pd.DataFrame:
     ]
 
 
-# ── Plotly charts ──────────────────────────────────────────────────────────────
+# Plotly charts 
 
 def chart_by_status(df: pd.DataFrame) -> go.Figure:
     """Donut chart of applications grouped by status."""
@@ -281,7 +280,7 @@ def chart_upcoming_deadlines(df: pd.DataFrame, days: int = 30) -> go.Figure:
     return fig
 
 
-# ── Smart insights ─────────────────────────────────────────────────────────────
+# Smart insights 
 
 def generate_insights(df: pd.DataFrame) -> list[dict]:
     """
@@ -359,7 +358,7 @@ def generate_insights(df: pd.DataFrame) -> list[dict]:
     return insights
 
 
-# ── Helpers ────────────────────────────────────────────────────────────────────
+#Helpers 
 
 def _empty_chart(title: str) -> go.Figure:
     fig = go.Figure()

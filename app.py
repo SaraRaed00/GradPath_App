@@ -35,119 +35,336 @@ from validation import validate_application
 from sample_data import insert_one_sample_application
 
 
-# ── Page config ────────────────────────────────────────────────────────────────
+# Page config
 
 st.set_page_config(
     page_title="GradPath AI",
-    page_icon="🎓",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
 
+# Premium UI styling
 
 st.markdown(
     """
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
-    /* Import IBM Plex Mono for that clean, technical feel */
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-
     html, body, [class*="css"] {
-        font-family: 'Space Grotesk', sans-serif;
+        font-family: 'Inter', sans-serif;
     }
 
-    /* Dark sidebar */
-    section[data-testid="stSidebar"] {
-        background-color: #0f172a;
+    .stApp {
+        background:
+            radial-gradient(circle at top left, rgba(37,99,235,0.16), transparent 32%),
+            radial-gradient(circle at bottom right, rgba(14,165,233,0.10), transparent 34%),
+            linear-gradient(180deg, #070b14 0%, #0f172a 100%);
+        color: #e5e7eb;
     }
+
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2.5rem;
+        max-width: 1220px;
+    }
+
+    section[data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #060a13 0%, #0b1120 100%);
+        border-right: 1px solid rgba(148,163,184,0.12);
+    }
+
     section[data-testid="stSidebar"] * {
-        color: #e2e8f0 !important;
+        color: #e5e7eb !important;
+    }
+
+    h1, h2, h3 {
+        color: #f8fafc !important;
+        font-weight: 750 !important;
+        letter-spacing: -0.035em;
+    }
+
+    p, label, div {
+        color: #cbd5e1;
+    }
+
+    hr {
+        border-color: rgba(148,163,184,0.16);
+    }
+
+    /* Sidebar brand */
+    .sidebar-brand {
+        padding: 16px 15px;
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 18px;
+        background:
+            linear-gradient(180deg, rgba(30,41,59,0.78), rgba(15,23,42,0.78));
+        box-shadow: 0 18px 30px rgba(0,0,0,0.28);
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-brand .logo {
+        width: 42px;
+        height: 42px;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(37,99,235,0.9), rgba(14,165,233,0.85));
+        color: white;
+        margin-bottom: 12px;
+        box-shadow: 0 12px 24px rgba(37,99,235,0.35);
+    }
+
+    .sidebar-brand h2 {
+        margin: 0;
+        font-size: 1.15rem;
+        letter-spacing: -0.02em;
+    }
+
+    .sidebar-brand p {
+        margin: 6px 0 0 0;
+        color: #94a3b8 !important;
+        font-size: 0.82rem;
+        line-height: 1.35;
+    }
+
+    .sidebar-footer {
+        color: #64748b;
+        font-size: 0.72rem;
+        line-height: 1.5;
+        border-top: 1px solid rgba(148,163,184,0.12);
+        padding-top: 1rem;
+        margin-top: 1rem;
+    }
+
+    /* Page header */
+    .page-header {
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        margin-bottom: 1.3rem;
+    }
+
+    .page-header-icon {
+        width: 48px;
+        height: 48px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, rgba(37,99,235,0.20), rgba(14,165,233,0.14));
+        border: 1px solid rgba(96,165,250,0.25);
+        color: #60a5fa;
+        font-size: 1.05rem;
+        box-shadow: 0 10px 22px rgba(0,0,0,0.18);
+    }
+
+    .page-header h1 {
+        margin: 0;
+        line-height: 1.05;
+    }
+
+    .page-subtitle {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-top: 6px;
     }
 
     /* Metric cards */
+    [data-testid="stMetricContainer"],
     [data-testid="metric-container"] {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 12px;
-        padding: 1rem;
+        background: linear-gradient(180deg, rgba(30,41,59,0.94), rgba(15,23,42,0.94));
+        border: 1px solid rgba(148,163,184,0.18);
+        border-radius: 18px;
+        padding: 18px;
+        box-shadow: 0 14px 28px rgba(0,0,0,0.24);
     }
+
+    [data-testid="stMetricLabel"],
     [data-testid="metric-container"] label {
         color: #94a3b8 !important;
-        font-family: 'IBM Plex Mono', monospace !important;
-        font-size: 0.75rem !important;
+        font-size: 0.82rem !important;
+        font-weight: 650 !important;
     }
+
+    [data-testid="stMetricValue"],
     [data-testid="metric-container"] [data-testid="stMetricValue"] {
-        color: #f1f5f9 !important;
-        font-family: 'IBM Plex Mono', monospace !important;
-        font-size: 2rem !important;
+        color: #f8fafc !important;
+        font-size: 1.85rem !important;
+        font-weight: 800 !important;
     }
 
-    /* Main background */
-    .stApp {
-        background-color: #0f172a;
-        color: #e2e8f0;
+    /* Forms and inputs */
+    .stTextInput input,
+    .stTextArea textarea,
+    .stSelectbox select,
+    .stDateInput input,
+    div[data-baseweb="select"] > div {
+        background: rgba(15, 23, 42, 0.92) !important;
+        border: 1px solid rgba(148,163,184,0.22) !important;
+        color: #f8fafc !important;
+        border-radius: 12px !important;
     }
 
-    /* Headings */
-    h1, h2, h3 {
-        color: #f1f5f9 !important;
-        font-family: 'Space Grotesk', sans-serif !important;
+    textarea {
+        color: #f8fafc !important;
     }
 
     /* Buttons */
-    .stButton > button {
-        background: #3b82f6;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        font-family: 'IBM Plex Mono', monospace;
-        font-size: 0.85rem;
-        transition: background 0.2s;
-    }
-    .stButton > button:hover {
-        background: #2563eb;
+    .stButton > button,
+    .stDownloadButton > button,
+    button[kind="primary"],
+    button[kind="secondary"] {
+        border-radius: 12px !important;
+        font-weight: 650 !important;
+        border: 1px solid rgba(96,165,250,0.22) !important;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.18);
     }
 
-    /* Input fields */
-    .stTextInput input, .stTextArea textarea, .stSelectbox select {
-        background: #1e293b !important;
-        border: 1px solid #334155 !important;
-        color: #e2e8f0 !important;
-        border-radius: 8px !important;
+    .stButton > button,
+    .stDownloadButton > button {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8) !important;
+        color: white !important;
     }
 
-    /* Dataframe */
+    .stButton > button:hover,
+    .stDownloadButton > button:hover {
+        background: linear-gradient(135deg, #1d4ed8, #1e40af) !important;
+        color: white !important;
+        border-color: rgba(147,197,253,0.36) !important;
+    }
+
+    /* Tables and charts */
     .stDataFrame {
-        border-radius: 10px;
+        border: 1px solid rgba(148,163,184,0.16);
+        border-radius: 16px;
         overflow: hidden;
+        box-shadow: 0 16px 32px rgba(0,0,0,0.20);
     }
 
-    /* Info/success/warning/error boxes */
+    /* Alerts */
     .stAlert {
-        border-radius: 10px;
+        border-radius: 14px !important;
+        border: 1px solid rgba(148,163,184,0.14);
     }
 
-    /* Dividers */
-    hr {
-        border-color: #334155;
-    }
-
-    /* Pipeline boxes */
-    .pipeline-box {
-        background: #1e293b;
-        border: 1px solid #334155;
-        border-radius: 10px;
+    /* Cards */
+    .pipeline-card {
+        background: linear-gradient(180deg, rgba(30,41,59,0.94), rgba(15,23,42,0.94));
+        border: 1px solid rgba(148,163,184,0.16);
+        border-radius: 18px;
         padding: 1rem;
         text-align: center;
+        box-shadow: 0 14px 26px rgba(0,0,0,0.20);
     }
 
-    /* Insight cards */
+    .pipeline-card .stage-icon {
+        width: 44px;
+        height: 44px;
+        margin: 0 auto 10px auto;
+        border-radius: 14px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(37,99,235,0.14);
+        border: 1px solid rgba(96,165,250,0.18);
+        color: #60a5fa;
+        font-size: 1rem;
+    }
+
+    .pipeline-card .stage-name {
+        color: #cbd5e1;
+        font-weight: 650;
+        margin-bottom: 4px;
+    }
+
+    .pipeline-card .stage-value {
+        color: #f8fafc;
+        font-size: 1.8rem;
+        font-weight: 800;
+    }
+
+    .deadline-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: linear-gradient(180deg, rgba(30,41,59,0.94), rgba(15,23,42,0.94));
+        border-radius: 14px;
+        padding: 0.9rem 1rem;
+        margin-bottom: 0.65rem;
+        border: 1px solid rgba(148,163,184,0.14);
+        box-shadow: 0 10px 22px rgba(0,0,0,0.16);
+    }
+
+    .deadline-title {
+        color: #f8fafc;
+        font-weight: 650;
+    }
+
+    .deadline-subtitle {
+        color: #94a3b8;
+        font-size: 0.86rem;
+        margin-top: 2px;
+    }
+
+    .deadline-badge {
+        font-weight: 750;
+        font-size: 0.85rem;
+        padding: 0.35rem 0.6rem;
+        border-radius: 999px;
+    }
+
     .insight-card {
-        background: #1e293b;
+        background: linear-gradient(180deg, rgba(30,41,59,0.94), rgba(15,23,42,0.94));
+        border: 1px solid rgba(148,163,184,0.16);
         border-left: 4px solid #3b82f6;
-        border-radius: 8px;
-        padding: 1rem 1.25rem;
-        margin-bottom: 0.75rem;
+        border-radius: 16px;
+        padding: 1rem 1.2rem;
+        margin-bottom: 0.85rem;
+        box-shadow: 0 12px 24px rgba(0,0,0,0.18);
+    }
+
+    .insight-title {
+        color: #f8fafc;
+        font-weight: 750;
+        margin-bottom: 4px;
+    }
+
+    .insight-body {
+        color: #94a3b8;
+        line-height: 1.5;
+    }
+
+    .subtle-card {
+        background: linear-gradient(180deg, rgba(30,41,59,0.74), rgba(15,23,42,0.74));
+        border: 1px solid rgba(148,163,184,0.14);
+        border-radius: 16px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .small-muted {
+        color: #94a3b8;
+        font-size: 0.85rem;
+        line-height: 1.45;
+    }
+
+    .feature-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(96,165,250,0.22);
+        background: rgba(37,99,235,0.10);
+        color: #bfdbfe;
+        border-radius: 999px;
+        padding: 0.38rem 0.7rem;
+        font-size: 0.82rem;
+        font-weight: 650;
+        margin-bottom: 1rem;
     }
     </style>
     """,
@@ -155,11 +372,49 @@ st.markdown(
 )
 
 
+# Helper functions
+
+def render_page_header(icon_class: str, title: str, subtitle: str) -> None:
+    """Render a consistent premium page header."""
+    st.markdown(
+        f"""
+        <div class="page-header">
+            <div class="page-header-icon"><i class="{icon_class}"></i></div>
+            <div>
+                <h1>{title}</h1>
+                <div class="page-subtitle">{subtitle}</div>
+            </div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def render_sidebar_brand() -> None:
+    """Render sidebar brand block."""
+    st.markdown(
+        """
+        <div class="sidebar-brand">
+            <div class="logo"><i class="fa-solid fa-graduation-cap"></i></div>
+            <h2>GradPath AI</h2>
+            <p>Career tracking for students and fresh graduates.</p>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
+
+def safe_option_index(options: list[str], value: str | None, default_index: int = 0) -> int:
+    """Return the index of value in options, with a safe fallback."""
+    if value in options:
+        return options.index(value)
+    return default_index
+
+
+# Sidebar navigation
 
 with st.sidebar:
-    st.markdown("## 🎓 GradPath AI")
-    st.markdown("*Your job search command center*")
-    st.divider()
+    render_sidebar_brand()
 
     page = st.radio(
         "Navigate",
@@ -174,49 +429,50 @@ with st.sidebar:
         label_visibility="collapsed",
     )
 
-    st.divider()
     st.markdown(
-        "<span style='font-size:0.7rem;color:#475569;font-family:IBM Plex Mono,monospace'>"
-        "GradPath AI v1.0<br>Built for students 🎓"
-        "</span>",
+        """
+        <div class="sidebar-footer">
+            GradPath AI v1.0<br>
+            Built with Streamlit, Supabase, pandas, Plotly, and AI-supported guidance.
+        </div>
+        """,
         unsafe_allow_html=True,
     )
 
-
 # PAGE: Dashboard
-
 if page == "Dashboard":
-    st.title("📊 Dashboard")
-    st.caption("Your job search at a glance.")
+    render_page_header(
+        "fa-solid fa-chart-line",
+        "Dashboard",
+        "A high-level view of your job search pipeline, deadlines, and progress.",
+    )
 
     df = get_all_applications()
     metrics = compute_metrics(df)
 
-    # KPI row
     c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Total Applications", metrics["total"])
     c2.metric("Active", metrics["active"])
     c3.metric("Interviews", metrics["interviews"])
-    c4.metric("Offers 🎉", metrics["offers"])
+    c4.metric("Offers", metrics["offers"])
     c5.metric("Rejections", metrics["rejections"])
 
     c6, c7, c8 = st.columns(3)
     c6.metric("Interview Rate", f"{metrics['interview_rate']}%")
     c7.metric("Offer Rate", f"{metrics['offer_rate']}%")
-    c8.metric("⏰ Deadlines (7 days)", metrics["upcoming_deadlines"])
+    c8.metric("Deadlines in 7 Days", metrics["upcoming_deadlines"])
 
     st.divider()
 
-    # Pipeline
     st.subheader("Application Pipeline")
 
     cols = st.columns(5)
     stages = [
-        ("💾", "Saved"),
-        ("📤", "Applied"),
-        ("🗣️", "Interview"),
-        ("✅", "Offer"),
-        ("❌", "Rejected"),
+        ("fa-regular fa-bookmark", "Saved"),
+        ("fa-solid fa-paper-plane", "Applied"),
+        ("fa-regular fa-comments", "Interview"),
+        ("fa-solid fa-circle-check", "Offer"),
+        ("fa-solid fa-circle-xmark", "Rejected"),
     ]
 
     status_counts = df["status"].value_counts() if not df.empty else {}
@@ -231,10 +487,10 @@ if page == "Dashboard":
         with col:
             st.markdown(
                 f"""
-                <div class="pipeline-box">
-                    <div style="font-size:1.75rem">{icon}</div>
-                    <div style="font-weight:600;color:#e2e8f0">{stage}</div>
-                    <div style="font-size:2rem;font-family:'IBM Plex Mono',monospace;color:#60a5fa">{count}</div>
+                <div class="pipeline-card">
+                    <div class="stage-icon"><i class="{icon}"></i></div>
+                    <div class="stage-name">{stage}</div>
+                    <div class="stage-value">{count}</div>
                 </div>
                 """,
                 unsafe_allow_html=True,
@@ -242,50 +498,67 @@ if page == "Dashboard":
 
     st.divider()
 
-    # Upcoming deadlines
-    st.subheader("⏰ Upcoming Deadlines (Next 7 Days)")
+    st.subheader("Upcoming Deadlines")
+    st.caption("Applications with deadlines in the next 7 days.")
+
     upcoming = get_upcoming_deadlines(df, days=7)
 
     if upcoming.empty:
-        st.info("No deadlines in the next 7 days. You're on top of things! 🎉")
+        st.info("No deadlines in the next 7 days.")
     else:
         for _, row in upcoming.iterrows():
             days_left = int(row["days_left"])
-            color = (
-                "#f87171"
-                if days_left <= 2
-                else "#f59e0b"
-                if days_left <= 4
-                else "#34d399"
-            )
+
+            if days_left <= 2:
+                badge_bg = "rgba(248,113,113,0.14)"
+                badge_color = "#fca5a5"
+                border_color = "#f87171"
+            elif days_left <= 4:
+                badge_bg = "rgba(245,158,11,0.14)"
+                badge_color = "#fbbf24"
+                border_color = "#f59e0b"
+            else:
+                badge_bg = "rgba(52,211,153,0.14)"
+                badge_color = "#6ee7b7"
+                border_color = "#34d399"
 
             st.markdown(
                 f"""
-                <div style="display:flex;justify-content:space-between;align-items:center;
-                    background:#1e293b;border-radius:8px;padding:0.75rem 1rem;margin-bottom:0.5rem;
-                    border-left:4px solid {color}">
-                    <span><b>{row['company']}</b> — {row['job_title']}</span>
-                    <span style="font-family:'IBM Plex Mono',monospace;color:{color}">{days_left}d left</span>
+                <div class="deadline-card" style="border-left:4px solid {border_color};">
+                    <div>
+                        <div class="deadline-title">{row['company']} — {row['job_title']}</div>
+                        <div class="deadline-subtitle">Status: {row.get('status', 'N/A')}</div>                    </div>
+                    <div class="deadline-badge" style="background:{badge_bg}; color:{badge_color};">
+                        {days_left} days left
+                    </div>
                 </div>
                 """,
                 unsafe_allow_html=True,
             )
 
 
+
 # PAGE: Add Application
 
 elif page == "Add Application":
-    st.title("➕ Add Application")
-    st.caption("Track a new job, internship, or program.")
+    render_page_header(
+        "fa-solid fa-briefcase",
+        "Add Application",
+        "Store a new opportunity with structured details and a job description for analysis.",
+    )
 
-    # Demo helper: hidden by default, not shown globally in sidebar.
     with st.expander("Demo helper", expanded=False):
-        st.caption(
-            "Use this only during testing or presentation setup. "
-            "It inserts one realistic sample application without creating duplicates."
+        st.markdown(
+            """
+            <div class="small-muted">
+            Use this only for presentation setup. It inserts one realistic sample application
+            and avoids creating duplicates.
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
-        if st.button("Insert 1 sample application", use_container_width=True):
+        if st.button("Insert 1 sample application", width="stretch"):
             with st.spinner("Adding one sample application..."):
                 success, message = insert_one_sample_application()
 
@@ -299,10 +572,10 @@ elif page == "Add Application":
         col1, col2 = st.columns(2)
 
         with col1:
-            company = st.text_input("Company *", placeholder="e.g. Google")
-            job_title = st.text_input("Job Title *", placeholder="e.g. Software Engineer Intern")
+            company = st.text_input("Company *", placeholder="Example: EdTech Kuwait")
+            job_title = st.text_input("Job Title *", placeholder="Example: Junior Data Analyst Intern")
             job_type = st.selectbox("Job Type *", JOB_TYPE_OPTIONS)
-            location = st.text_input("Location", placeholder="e.g. Dubai, UAE")
+            location = st.text_input("Location", placeholder="Example: Kuwait City, Kuwait")
             application_date = st.date_input("Application Date *", value=date.today())
             deadline = st.date_input("Deadline", value=None)
 
@@ -312,19 +585,19 @@ elif page == "Add Application":
             source = st.selectbox("Source", SOURCE_OPTIONS)
             notes = st.text_area(
                 "Notes",
-                placeholder="Any personal notes…",
+                placeholder="Add personal notes, follow-up reminders, or preparation points.",
                 max_chars=500,
                 height=120,
             )
 
         job_description = st.text_area(
             "Job Description",
-            placeholder="Paste the full job description here (used by AI Assistant)…",
+            placeholder="Paste the full job description here. The AI Assistant can analyze it later.",
             max_chars=4000,
-            height=200,
+            height=210,
         )
 
-        submitted = st.form_submit_button("💾 Save Application", use_container_width=True)
+        submitted = st.form_submit_button("Save Application", width="stretch")
 
     if submitted:
         errors = validate_application(
@@ -341,7 +614,7 @@ elif page == "Add Application":
 
         if errors:
             for err in errors:
-                st.error(f"❌ {err}")
+                st.error(err)
         else:
             payload = {
                 "company": company.strip(),
@@ -360,45 +633,47 @@ elif page == "Add Application":
             result = create_application(payload)
 
             if result:
-                st.success(f"✅ Application to **{company}** saved successfully!")
+                st.success(f"Application to {company} saved successfully.")
 
                 if not job_description.strip():
                     st.info(
-                        "Tip: Add a job description later or paste one in the AI Assistant "
-                        "if you want preparation suggestions for this application."
+                        "Tip: add a job description later or paste one in the AI Assistant "
+                        "to generate preparation guidance."
                     )
             else:
                 st.error(
-                    "Something went wrong saving your application. "
-                    "Check your Supabase connection."
+                    "Something went wrong while saving the application. "
+                    "Check the Supabase connection and table policies."
                 )
 
 
 # PAGE: Applications
 
 elif page == "Applications":
-    st.title("📋 Applications")
-    st.caption("Search, filter, and manage all your applications.")
+    render_page_header(
+        "fa-solid fa-table-list",
+        "Applications",
+        "Search, filter, sort, update, and manage your saved opportunities.",
+    )
 
     col_refresh, col_spacer = st.columns([1, 5])
 
     with col_refresh:
-        if st.button("🔄 Refresh"):
+        if st.button("Refresh", width="stretch"):
             st.cache_resource.clear()
             st.rerun()
 
     df = get_all_applications()
 
     if df.empty:
-        st.info("No applications yet. Add your first one! 🚀")
+        st.info("No applications found. Add your first application to begin.")
         st.stop()
 
-    # Filters
-    with st.expander("🔍 Search & Filter", expanded=True):
+    with st.expander("Search and Filter", expanded=True):
         fcol1, fcol2, fcol3, fcol4 = st.columns(4)
 
         with fcol1:
-            search_q = st.text_input("Search", placeholder="Company, title, or source…")
+            search_q = st.text_input("Search", placeholder="Company, title, or source")
 
         with fcol2:
             status_filter = st.multiselect("Status", STATUS_OPTIONS)
@@ -438,10 +713,9 @@ elif page == "Applications":
     st.markdown(f"**{len(filtered)}** application(s) found.")
 
     if filtered.empty:
-        st.warning("No applications match your filters.")
+        st.warning("No applications match the selected filters.")
         st.stop()
 
-    # Display table columns
     display_cols = [
         "company",
         "job_title",
@@ -459,13 +733,12 @@ elif page == "Applications":
         filtered[available].rename(
             columns={c: c.replace("_", " ").title() for c in available}
         ),
-        use_container_width=True,
+        width="stretch",
         hide_index=True,
     )
 
     st.divider()
 
-    # Edit / Delete
     st.subheader("Edit or Delete an Application")
 
     app_options = {
@@ -477,7 +750,7 @@ elif page == "Applications":
     selected_id = app_options[selected_label]
     selected_row = filtered[filtered["id"] == selected_id].iloc[0]
 
-    edit_tab, delete_tab = st.tabs(["✏️ Edit", "🗑️ Delete"])
+    edit_tab, delete_tab = st.tabs(["Edit", "Delete"])
 
     with edit_tab:
         with st.form(f"edit_form_{selected_id}"):
@@ -495,8 +768,9 @@ elif page == "Applications":
                 e_type = st.selectbox(
                     "Job Type *",
                     JOB_TYPE_OPTIONS,
-                    index=JOB_TYPE_OPTIONS.index(
-                        selected_row.get("job_type", JOB_TYPE_OPTIONS[0])
+                    index=safe_option_index(
+                        JOB_TYPE_OPTIONS,
+                        selected_row.get("job_type"),
                     ),
                 )
                 e_location = st.text_input(
@@ -520,24 +794,25 @@ elif page == "Applications":
                 e_status = st.selectbox(
                     "Status *",
                     STATUS_OPTIONS,
-                    index=STATUS_OPTIONS.index(
-                        selected_row.get("status", STATUS_OPTIONS[0])
+                    index=safe_option_index(
+                        STATUS_OPTIONS,
+                        selected_row.get("status"),
                     ),
                 )
                 e_priority = st.selectbox(
                     "Priority *",
                     PRIORITY_OPTIONS,
-                    index=PRIORITY_OPTIONS.index(
-                        selected_row.get("priority", PRIORITY_OPTIONS[0])
+                    index=safe_option_index(
+                        PRIORITY_OPTIONS,
+                        selected_row.get("priority"),
                     ),
                 )
                 e_source = st.selectbox(
                     "Source",
                     SOURCE_OPTIONS,
-                    index=(
-                        SOURCE_OPTIONS.index(selected_row.get("source", SOURCE_OPTIONS[0]))
-                        if selected_row.get("source") in SOURCE_OPTIONS
-                        else 0
+                    index=safe_option_index(
+                        SOURCE_OPTIONS,
+                        selected_row.get("source"),
                     ),
                 )
                 e_notes = st.text_area(
@@ -550,10 +825,10 @@ elif page == "Applications":
                 "Job Description",
                 value=selected_row.get("job_description") or "",
                 max_chars=4000,
-                height=120,
+                height=130,
             )
 
-            save_edit = st.form_submit_button("💾 Save Changes", use_container_width=True)
+            save_edit = st.form_submit_button("Save Changes", width="stretch")
 
         if save_edit:
             errors = validate_application(
@@ -570,7 +845,7 @@ elif page == "Applications":
 
             if errors:
                 for err in errors:
-                    st.error(f"❌ {err}")
+                    st.error(err)
             else:
                 ok = update_application(
                     selected_id,
@@ -590,17 +865,17 @@ elif page == "Applications":
                 )
 
                 if ok:
-                    st.success("✅ Application updated!")
+                    st.success("Application updated.")
                     st.rerun()
 
     with delete_tab:
         st.warning(
             f"Are you sure you want to delete "
-            f"**{selected_row['company']} — {selected_row['job_title']}**? "
-            "This cannot be undone."
+            f"{selected_row['company']} — {selected_row['job_title']}? "
+            "This action cannot be undone."
         )
 
-        if st.button("🗑️ Yes, Delete", type="primary"):
+        if st.button("Delete Application", type="primary"):
             ok = delete_application(selected_id)
 
             if ok:
@@ -611,25 +886,37 @@ elif page == "Applications":
 # PAGE: Analytics
 
 elif page == "Analytics":
-    st.title("📈 Analytics")
-    st.caption("Data-driven insights into your job search. **(Data Science Feature)**")
+    render_page_header(
+        "fa-solid fa-chart-pie",
+        "Analytics",
+        "Interactive data analysis for application trends, sources, and deadlines.",
+    )
+
+    st.markdown(
+        """
+        <div class="feature-pill">
+            <i class="fa-solid fa-database"></i>
+            Data Science Feature
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     df = get_all_applications()
 
     if df.empty:
-        st.info("No data to analyze yet. Add some applications or use the demo helper.")
+        st.info("No data available yet. Add applications or use the demo helper.")
         st.stop()
 
-    # Smart insights
-    st.subheader("💡 Smart Insights")
+    st.subheader("Smart Insights")
     insights = generate_insights(df)
 
     for ins in insights:
         st.markdown(
             f"""
             <div class="insight-card">
-                <b>{ins['icon']} {ins['title']}</b><br>
-                <span style="color:#94a3b8">{ins['body']}</span>
+                <div class="insight-title">{ins['title']}</div>
+                <div class="insight-body">{ins['body']}</div>
             </div>
             """,
             unsafe_allow_html=True,
@@ -637,37 +924,33 @@ elif page == "Analytics":
 
     st.divider()
 
-    # Charts row 1
     c1, c2 = st.columns(2)
 
     with c1:
-        st.plotly_chart(chart_by_status(df), use_container_width=True)
+        st.plotly_chart(chart_by_status(df), width="stretch")
 
     with c2:
-        st.plotly_chart(chart_over_time(df), use_container_width=True)
+        st.plotly_chart(chart_over_time(df), width="stretch")
 
-    # Charts row 2
     c3, c4 = st.columns(2)
 
     with c3:
-        st.plotly_chart(chart_by_job_type(df), use_container_width=True)
+        st.plotly_chart(chart_by_job_type(df), width="stretch")
 
     with c4:
-        st.plotly_chart(chart_by_source(df), use_container_width=True)
+        st.plotly_chart(chart_by_source(df), width="stretch")
 
-    # Charts row 3
     c5, c6 = st.columns(2)
 
     with c5:
-        st.plotly_chart(chart_interview_rate_by_source(df), use_container_width=True)
+        st.plotly_chart(chart_interview_rate_by_source(df), width="stretch")
 
     with c6:
-        st.plotly_chart(chart_upcoming_deadlines(df, days=30), use_container_width=True)
+        st.plotly_chart(chart_upcoming_deadlines(df, days=30), width="stretch")
 
     st.divider()
 
-    # Raw summary table
-    with st.expander("📊 View Status Summary Table"):
+    with st.expander("View Status Summary Table"):
         summary = (
             df.groupby("status")
             .agg(
@@ -676,20 +959,31 @@ elif page == "Analytics":
             .reset_index()
         )
 
-        st.dataframe(summary, use_container_width=True, hide_index=True)
+        st.dataframe(summary, width="stretch", hide_index=True)
 
 
 # PAGE: AI Assistant
 
 elif page == "AI Assistant":
-    st.title("🤖 AI Job Preparation Assistant")
-    st.caption("Get tailored insights from your job descriptions. **(AI Bonus Feature)**")
+    render_page_header(
+        "fa-solid fa-sparkles",
+        "AI Job Preparation Assistant",
+        "Analyze job descriptions and generate preparation guidance for students.",
+    )
+
+    st.markdown(
+        """
+        <div class="feature-pill">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            AI Bonus Feature
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
     st.info(
-        "⚠️ **Responsible AI Notice:** AI suggestions are generated automatically and may not be "
-        "fully accurate. Always review and personalize them before use. They are meant to support "
-        "your preparation, not replace your own judgment.",
-        icon="ℹ️",
+        "Responsible AI Notice: suggestions are generated automatically and may not be fully accurate. "
+        "Review and personalize them before using them in real applications or interviews."
     )
 
     df = get_all_applications()
@@ -725,10 +1019,10 @@ elif page == "AI Assistant":
         if saved_description.strip():
             job_description = saved_description
 
-            with st.expander("📄 Preview Job Description"):
+            with st.expander("Preview Job Description"):
                 st.text(
                     job_description[:1000]
-                    + ("…" if len(job_description) > 1000 else "")
+                    + ("..." if len(job_description) > 1000 else "")
                 )
         else:
             st.warning(
@@ -738,34 +1032,33 @@ elif page == "AI Assistant":
 
             job_description = st.text_area(
                 "Job Description *",
-                placeholder="Paste the job description for this application…",
+                placeholder="Paste the job description for this application.",
                 height=250,
                 max_chars=4000,
             )
 
     else:
-        company = st.text_input("Company (optional)", placeholder="e.g. Google")
-        job_title = st.text_input("Job Title (optional)", placeholder="e.g. Data Analyst Intern")
+        company = st.text_input("Company", placeholder="Example: EdTech Kuwait")
+        job_title = st.text_input("Job Title", placeholder="Example: Junior Data Analyst Intern")
         job_description = st.text_area(
             "Job Description *",
-            placeholder="Paste the full job description here…",
+            placeholder="Paste the full job description here.",
             height=250,
             max_chars=4000,
         )
 
-    if st.button("🚀 Analyze Job Description", type="primary", use_container_width=True):
+    if st.button("Analyze Job Description", type="primary", width="stretch"):
         if not job_description or len(job_description.strip()) < 30:
             st.error("Please provide a job description with at least 30 characters.")
         else:
-            with st.spinner("Analyzing… this may take a few seconds ⏳"):
+            with st.spinner("Analyzing the job description..."):
                 result = analyze_job_description(job_description, company, job_title)
 
             if result["source"] == "openai":
-                st.success("✅ Analysis generated using OpenAI GPT.")
+                st.success("Analysis generated using OpenAI GPT.")
             elif result["source"] == "fallback":
                 st.warning(
-                    "⚠️ OpenAI API key not configured. "
-                    "Showing rule-based analysis instead."
+                    "OpenAI API key is not configured. Showing rule-based analysis instead."
                 )
             elif result["source"] == "error":
                 st.error(result["content"])
@@ -776,17 +1069,22 @@ elif page == "AI Assistant":
 
                 st.divider()
                 st.download_button(
-                    "📥 Download Analysis",
+                    "Download Analysis",
                     data=result["content"],
                     file_name=f"gradpath_analysis_{company or 'job'}.md".replace(" ", "_"),
                     mime="text/markdown",
+                    width="stretch",
                 )
 
 
 # PAGE: About
 
 elif page == "About":
-    st.title("ℹ️ About GradPath AI")
+    render_page_header(
+        "fa-solid fa-circle-info",
+        "About GradPath AI",
+        "Project overview, architecture, and implementation summary.",
+    )
 
     st.markdown(
         """
@@ -832,7 +1130,7 @@ Students applying to internships, graduate programs, and entry-level jobs often 
 
 ---
 
-## AI Feature: Job Preparation Assistant
+AI Feature: Job Preparation Assistant
 
 The **AI Job Preparation Assistant** analyzes job descriptions and returns:
 
@@ -843,18 +1141,19 @@ The **AI Job Preparation Assistant** analyzes job descriptions and returns:
 - A follow-up email draft
 - Practical next steps
 
-When an OpenAI API key is configured, the app uses OpenAI's `gpt-4o-mini` model. If no API key is configured, the app uses a rule-based fallback analyzer that detects common keywords across technical, business, marketing, finance, education, healthcare, design, HR, legal, and soft-skill categories.
+Since i didnot include a key,, im using a rule-based fallback analyzer that detects common keywords across 
+technical, business, marketing, finance, education, healthcare, design, HR, legal, and soft-skill categories.
 
-The fallback does not use generative AI. It exists so the app remains functional during development and demos even without API access.
 
----
+When an OpenAI API key is configured, the app uses OpenAI's `gpt-4o-mini` model. If no API key is configured, the app uses 
+a rule-based fallback analyzer that detects common keywords across technical, business, marketing, finance, education, healthcare, design, HR, legal, and soft-skill categories.
+
 
 ## Data Science Feature: Analytics Dashboard
 
 The **Analytics page** is the data science bonus feature. It uses `pandas` for data transformation and `Plotly` for interactive charts.
 
 It includes:
-
 - Applications by status
 - Applications submitted over time
 - Applications by job type
@@ -863,13 +1162,6 @@ It includes:
 - Upcoming deadlines timeline
 - Smart text insights based on job search data
 
----
-
-## Responsible AI Usage
-
-AI-generated suggestions are intended as preparation support only. They may not be fully accurate or complete. Users should review, personalize, and verify all generated content before using it in real applications or interviews.
-
----
 
 ## Project Structure
 
@@ -884,18 +1176,15 @@ gradpath_ai/
 ├── sample_data.py   # Demo helper for inserting sample data
 ├── requirements.txt
 ├── README.md
-└── .env.example
-```
+└── .env.example 
 
----
+Tasks completed without AI assistance
+Database schema design and Supabase setup
+Form validation logic
+Filter and sort logic for applications
+Smart insight generation rules
+Rule-based fallback analyzer
+Page layout and navigation structure
+README and documentation
 
-## Tasks completed without AI assistance
-
-- Database schema design and Supabase setup
-- Form validation logic (validation.py)
-- Filter and sort logic for applications (applications.py)
-- Smart insight generation rules (analytics.py)
-- Fallback rule-based analyzer (ai_utils.py)
-- Page layout and navigation structure
-- README and documentation
-    """)
+""")
